@@ -1,4 +1,11 @@
 import './App.css';
+/*
+  React Hooks 개념 중 하나인 UseState()
+  useState : 컴포넌트가 가질 수 있는 상태
+  [형식] const [state, setState] = useState(초기값);
+    - 자바로 치면 setter 느낌
+*/
+import { useState } from 'react';
 // 컴포넌트(사용자 정의 태그) 생성
 function Header(props) {
   // props == 태그 속성들
@@ -20,7 +27,7 @@ function Nav(props) {
     let t = props.topics[i]
     // 방식1. 태그에 id 속성을 부여하여 넘겨주는 방식
     list.push(<li key={t.id}>
-      <a id={t.id} href={'/read/'+t.id} onClick={e=>{
+      <a id={t.id} href={'read/'+t.id} onClick={e=>{
         e.preventDefault();
         props.onChangeMode(e.target.id);
       }}>{t.title}</a>
@@ -48,7 +55,16 @@ function Article(props) {
   </article>
 }
 function App() {
-  const mode = 'WELCOME';
+  /*
+    *** useState() 개념 ***
+    const _mode = useState('WELCOME');
+    const mode = _mode[0]; // 상태 값
+    const setMode = _mode[1]; // _mode[0] 값을 변경할 수 있음(setter)
+
+    [형식] const [state, setState] = useState(초기값);
+   */
+  const [mode, setMode] = useState('WELCOME');
+  const [id, setid] = useState(null);
   //const : 상수로 선언할 때 사용하는 예약어
   const topics = [
     {id:1, title:'html', body:'html is ...'},
@@ -59,18 +75,25 @@ function App() {
   if(mode === 'WELCOME') {
     content = <Article title="Welcom" body="Hello, WEB"/>
   } else if(mode === 'READ'){
-    content = <Article title="Read" body="Hello, Read"/>
+    for(let i=0; i<topics.length; i++) {
+      if(topics[i].id === id) {
+        content = <Article title={topics[i].title} body={topics[i].body}/>
+      }
+    }
   }
   return (
     <div className="App">
       <Header title="WEB" onChangeMode={()=>{
         // 화살표 함수 [함수명 = ()=> {...}]
         // alert('Header');
-        mode = 'WELCOME';
+        // mode = 'WELCOME';
+        setMode('WELCOME');
       }}/>
-      <Nav topics={topics} onChangeMode={(id)=>{
+      <Nav topics={topics} onChangeMode={(_id)=>{
         // alert(id);
-        mode = 'READ';
+        // mode = 'READ';
+        setMode('READ');
+        setid(_id)
       }}/>
       {/* <Article title="Welcom" body="Hello, WEB"/> */}
       {content}
