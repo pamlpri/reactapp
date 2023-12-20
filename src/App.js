@@ -13,7 +13,7 @@ function Header(props) {
   return <header>
     <h1><a href="/" onClick={(e)=> {
       // event 값을 callback해줌
-      e.preventDefault(); // 고유 이벤트 기능 막기
+      // e.preventDefault(); // 고유 이벤트 기능 막기
       // onChangeMode()는 prop명
       props.onChangeMode();
     }}>{title}</a></h1>
@@ -27,9 +27,10 @@ function Nav(props) {
     let t = props.topics[i]
     // 방식1. 태그에 id 속성을 부여하여 넘겨주는 방식
     list.push(<li key={t.id}>
-      <a id={t.id} href={'read/'+t.id} onClick={e=>{
+      <a id={t.id} href={"/read/"+t.id} onClick={e=>{
         e.preventDefault();
-        props.onChangeMode(e.target.id);
+        // e.target.id 는 id 태그로 인해 숫자가 아닌 문자형이 되었기 때문에 Number 형변환
+        props.onChangeMode(Number(e.target.id));
       }}>{t.title}</a>
     </li>)
     // 방식2. 바로 id 값을 넘겨주는 형식
@@ -64,22 +65,26 @@ function App() {
     [형식] const [state, setState] = useState(초기값);
    */
   const [mode, setMode] = useState('WELCOME');
-  const [id, setid] = useState(null);
+  const [id, setId] = useState(null);
   //const : 상수로 선언할 때 사용하는 예약어
   const topics = [
     {id:1, title:'html', body:'html is ...'},
     {id:2, title:'css', body:'css is ...'},
     {id:3, title:'javascript', body:'javascript is ...'},
   ]
+  // topics를 클릭하는거에 따른 content 변경
   let content = null;
   if(mode === 'WELCOME') {
     content = <Article title="Welcom" body="Hello, WEB"/>
   } else if(mode === 'READ'){
+    let title, body = null;
     for(let i=0; i<topics.length; i++) {
       if(topics[i].id === id) {
-        content = <Article title={topics[i].title} body={topics[i].body}/>
+        title = topics[i].title;
+        body = topics[i].body;
       }
     }
+    content = <Article title={title} body={body}/>
   }
   return (
     <div className="App">
@@ -93,7 +98,7 @@ function App() {
         // alert(id);
         // mode = 'READ';
         setMode('READ');
-        setid(_id)
+        setId(_id)
       }}/>
       {/* <Article title="Welcom" body="Hello, WEB"/> */}
       {content}
